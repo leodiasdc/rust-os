@@ -10,28 +10,36 @@ use rust_os::println;
 #[unsafe(no_mangle)]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
-    rust_os::init(); 
+    rust_os::init();
+
     fn stack_overflow() {
         stack_overflow(); // for each recursion, the return address is pushed
     }
 
     // trigger a stack overflow
-    stack_overflow();
+    // stack_overflow();
+
     // trigger a page fault
-    unsafe {
-        *(0xdeadbeef as *mut u8) = 42;
-    }; 
+    // unsafe {
+    //     *(0xdeadbeef as *mut u8) = 42;
+    // }; 
+
     #[cfg(test)]
     test_main();
-
-    loop {}
+    
+    //deadlock exception provoke
+    // loop {
+    //     use rust_os::print;
+    //     print!("-");        // new
+    // }
+    rust_os::hlt_loop(); 
 }
 
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
-    loop {}
+    rust_os::hlt_loop();
 }
 
 #[cfg(test)]

@@ -12,6 +12,8 @@ test = true
 bench = false
 
 [dependencies]
+pc-keyboard = "0.7.0"
+pic8259 = "0.10.1"
 uart_16550 = "0.2.0"
 x86_64 = "0.14.2"
 bootloader = "0.9"
