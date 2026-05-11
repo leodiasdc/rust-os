@@ -9,7 +9,7 @@ pub mod serial;
 pub mod vga_buffer;
 pub mod interrupts;
 pub mod gdt;
-
+pub mod memory;
 use core::panic::PanicInfo;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -66,13 +66,6 @@ pub fn test_panic_handler(info: &PanicInfo) -> ! {
 }
 
 /// Entry point for `cargo test`
-#[cfg(test)]
-#[unsafe(no_mangle)]
-pub extern "C" fn _start() -> ! {
-    init();
-    test_main();
-    hlt_loop();
-}
 
 #[cfg(test)]
 #[panic_handler]
@@ -84,4 +77,19 @@ pub fn hlt_loop() -> ! {
     loop {
         x86_64::instructions::hlt();
     }
+}
+
+#[cfg(test)]
+use bootloader::{entry_point, BootInfo};
+
+#[cfg(test)]
+entry_point!(test_kernel_main);
+
+/// Entry point for `cargo test`
+#[cfg(test)]
+fn test_kernel_main(_boot_info: &'static BootInfo) -> ! {
+    // like before
+    init();
+    test_main();
+    hlt_loop();
 }
